@@ -1,4 +1,5 @@
 import type React from "react";
+import { createPanel } from "../components/panel";
 import type {
   ChatbotConfig,
   PanelProps,
@@ -42,6 +43,7 @@ function resolveConfig(config: ChatbotConfig): ResolvedChatbotConfig {
       guestMode: config.features?.guestMode ?? false,
     },
     maxMessagesPerHour: config.maxMessagesPerHour ?? 100,
+    basePath: config.basePath ?? "/api/chatbot",
   };
 }
 
@@ -57,7 +59,7 @@ export function Chatbot(config: ChatbotConfig): ChatbotInstance {
       DELETE: handler,
       PATCH: handler,
     },
-    Panel: null as unknown as React.ComponentType<PanelProps>,
+    Panel: createPanel(resolved),
     config: resolved,
   };
 }

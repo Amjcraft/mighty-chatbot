@@ -1,0 +1,25 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "mighty-chatbot": ["../src/index.ts"],
+      "@/components/chatbot/*": ["../src/components/chatbot/*"],
+      "@/components/ui/*": ["../src/components/ui/*"],
+      "@/components/ai-elements/*": ["../src/components/ai-elements/*"],
+      "@/components/theme-provider": ["../src/components/theme-provider"],
+      "@/hooks/*": ["../src/hooks/*"],
+      "@/src/*": ["../src/*"],
+      "@/lib/*": ["../lib/*"],
+      "@/*": ["../*"]
+    }
+  },
+  "include": [
+    ".",
+    "../src/**/*.ts",
+    "../src/**/*.tsx",
+    "../artifacts/**/*.ts",
+    "../artifacts/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "../node_modules", "../demo", "../app", "../lib", "../tests"]
+}

@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { config } from "@/chatbot.config";
-import { ThemeProvider } from "@/components/theme-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-
-import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "@/src/components/theme-provider";
+import { TooltipProvider } from "@/src/components/ui/tooltip";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chat.vercel.ai"),
-  title: config.name,
-  description: `${config.name} — AI assistant`,
+  title: "Demo",
+  description: "mighty-chatbot demo",
 };
 
 export const viewport = {
@@ -51,9 +48,9 @@ const THEME_COLOR_SCRIPT = `\
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html
       className={`${geist.variable} ${geistMono.variable}`}
@@ -62,10 +59,8 @@ export default function RootLayout({
     >
       <head>
         <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required"
-          dangerouslySetInnerHTML={{
-            __html: THEME_COLOR_SCRIPT,
-          }}
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: required for theme init
+          dangerouslySetInnerHTML={{ __html: THEME_COLOR_SCRIPT }}
         />
       </head>
       <body className="antialiased">

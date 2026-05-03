@@ -49,4 +49,12 @@ export interface StorageAdapter {
 
   // Bulk operations
   deleteAllChatsByUserId?(userId: string): Promise<void>;
+
+  // Message operations
+  getMessageById?(id: string): Promise<Message | null>;
+  deleteMessagesByChatIdAfterTimestamp?(
+    chatId: string,
+    timestamp: Date
+  ): Promise<void>;
+  updateChatVisibility?(chatId: string, visibility: string): Promise<void>;
 }

@@ -282,3 +282,40 @@ export async function handleChatDelete(
   await config.storage.deleteChat(id);
   return Response.json({ id }, { status: 200 });
 }
+
+const visibilityPatchSchema = z.object({
+  chatId: z.string().uuid(),
+  visibility: z.enum(["public", "private"]),
+});
+
+export async function handleChatVisibilityPatch(
+  request: Request,
+  { config }: Ctx
+): Promise<Response> {
+  const body = await request.json().catch(() => null);
+  const parsed = visibilityPatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return badRequest("chatId and visibility required");
+  }
+  const { chatId, visibility } = parsed.data;
+
+  const user = await config.auth(request);
+  if (!user) {
+    return unauthorized();
+  }
+
+  const chat = await config.storage.getChat(chatId, user.id);
+  if (!chat) {
+    return notFound("Chat not found");
+  }
+  if (chat.userId !== user.id) {
+    return forbidden();
+  }
+
+  if (!config.storage.updateChatVisibility) {
+    return Response.json({ error: "Not supported" }, { status: 501 });
+  }
+
+  await config.storage.updateChatVisibility(chatId, visibility);
+  return Response.json({ chatId, visibility }, { status: 200 });
+}

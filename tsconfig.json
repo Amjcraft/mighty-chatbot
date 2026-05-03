@@ -19,6 +19,11 @@
       }
     ],
     "paths": {
+      "@/components/chatbot/*": ["./src/components/chatbot/*"],
+      "@/components/ui/*": ["./src/components/ui/*"],
+      "@/components/ai-elements/*": ["./src/components/ai-elements/*"],
+      "@/components/theme-provider": ["./src/components/theme-provider"],
+      "@/hooks/*": ["./src/hooks/*"],
       "@/*": ["./*"]
     },
     "strictNullChecks": true
@@ -31,5 +36,5 @@
     "next.config.js",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "demo"]
 }

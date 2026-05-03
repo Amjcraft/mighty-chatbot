@@ -1,5 +1,5 @@
 import type { ResolvedChatbotConfig } from "../core/config";
-import { badRequest } from "./utils";
+import { badRequest, forbidden, notFound, unauthorized } from "./utils";
 
 type Ctx = { config: ResolvedChatbotConfig };
 
@@ -58,4 +58,43 @@ export async function handleMessagesGet(
     userId: chat.userId,
     isReadonly,
   });
+}
+
+export async function handleMessagesDelete(
+  request: Request,
+  { config }: Ctx
+): Promise<Response> {
+  const { searchParams } = new URL(request.url);
+  const messageId = searchParams.get("messageId");
+  if (!messageId) {
+    return badRequest("messageId required");
+  }
+
+  const user = await config.auth(request);
+  if (!user) {
+    return unauthorized();
+  }
+
+  if (
+    !config.storage.getMessageById ||
+    !config.storage.deleteMessagesByChatIdAfterTimestamp
+  ) {
+    return Response.json({ error: "Not supported" }, { status: 501 });
+  }
+
+  const message = await config.storage.getMessageById(messageId);
+  if (!message) {
+    return notFound("Message not found");
+  }
+
+  const chat = await config.storage.getChat(message.chatId, user.id);
+  if (!chat || chat.userId !== user.id) {
+    return forbidden();
+  }
+
+  await config.storage.deleteMessagesByChatIdAfterTimestamp(
+    message.chatId,
+    message.createdAt
+  );
+  return Response.json({ success: true }, { status: 200 });
 }

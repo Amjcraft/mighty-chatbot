@@ -1,11 +1,15 @@
-import { handleChatDelete, handleChatPost } from "../handlers/chat";
+import {
+  handleChatDelete,
+  handleChatPost,
+  handleChatVisibilityPatch,
+} from "../handlers/chat";
 import {
   handleDocumentDelete,
   handleDocumentGet,
   handleDocumentPost,
 } from "../handlers/document";
 import { handleHistoryDelete, handleHistoryGet } from "../handlers/history";
-import { handleMessagesGet } from "../handlers/messages";
+import { handleMessagesDelete, handleMessagesGet } from "../handlers/messages";
 import { handleModelsGet } from "../handlers/models";
 import { handleVoteGet, handleVotePatch } from "../handlers/vote";
 import type { ResolvedChatbotConfig } from "./config";
@@ -31,6 +35,9 @@ export function createDispatcher(config: ResolvedChatbotConfig) {
         if (method === "DELETE") {
           return handleChatDelete(request, ctx);
         }
+        if (method === "PATCH") {
+          return handleChatVisibilityPatch(request, ctx);
+        }
         break;
       case "history":
         if (method === "GET") {
@@ -43,6 +50,9 @@ export function createDispatcher(config: ResolvedChatbotConfig) {
       case "messages":
         if (method === "GET") {
           return handleMessagesGet(request, ctx);
+        }
+        if (method === "DELETE") {
+          return handleMessagesDelete(request, ctx);
         }
         break;
       case "vote":

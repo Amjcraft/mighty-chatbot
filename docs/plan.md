@@ -321,8 +321,12 @@ one at the code level — it just doesn't ship in the library core.
 ### Phase 6 — Split framework from package core
 
 **Goal:** hard-separate reusable chatbot package code from Next.js app/framework code.
-After this phase, `src/` is framework-minimal package code and the current app becomes
-a consumer in `demo/`.
+After this phase, `src/` owns all chatbot UI and logic; `demo/` is a thin consumer that
+only holds config, custom artifacts, auth UI, and an app shell. Demo pages mount
+`<chatbot.Panel />` — they do not contain chatbot components.
+
+**Key distinction:** `components/chatbot/`, `components/ui/`, and `hooks/` move INTO
+`src/` (they are the library). They do NOT move into `demo/`.
 
 #### 6.1 Define the boundary (before moving files)
 
@@ -339,40 +343,69 @@ a consumer in `demo/`.
 
 - [ ] Promote `src/index.ts` to the only default public surface for `Chatbot`,
       `defineArtifact`, and core types
+- [ ] Add component and hook exports to `src/index.ts` as needed by consumers
 - [ ] Add subpath exports for stable extension points only (for example:
       `mighty-chatbot/adapters/drizzle`)
 - [ ] Ensure no deep imports are required from consumer apps
 - [ ] Verify package types resolve from exported entrypoints only
 
-#### 6.3 Move app implementation to `demo/`
+#### 6.3 Move chatbot UI and logic into `src/`
 
-- [ ] Move current Next.js app directories into `demo/`:
-      `app/`, `components/`, `hooks/`, `artifacts/`, `public/`, `tests/` (or keep top-level
-      tests temporarily if needed)
-- [ ] Move/duplicate Next.js config files to `demo/`:
-      `next.config.ts`, `postcss.config.mjs`, `playwright.config.ts`, and demo-local env example
-- [ ] Keep package build config at repo root; keep demo build/dev config under `demo/`
-- [ ] Update TS path aliases so demo paths (`@/...`) resolve inside `demo/` without reaching
-      into package internals except through package exports
+All chatbot-owned code moves into the package. Nothing chatbot-related lands in `demo/`.
 
-#### 6.4 Wire demo as a consumer (not friend code)
+- [ ] Move `components/chatbot/` → `src/components/` (all chat UI components)
+- [ ] Move `hooks/` → `src/hooks/` (all custom React hooks)
+- [ ] Move `components/ui/` → `src/components/ui/` (shadcn primitives, library-owned)
+- [ ] Move `components/ai-elements/` → `src/components/` (AI dynamic elements)
+- [ ] Update all internal imports within `src/` to use the new paths
+- [ ] Move Next.js framework config files to `demo/`:
+      `next.config.ts`, `postcss.config.mjs`, `playwright.config.ts`, demo-local `.env.example`
+- [ ] Keep package build config at repo root; demo build/dev config lives under `demo/`
 
-- [ ] Create `demo/chatbot.config.ts` using `Chatbot({...})`
-- [ ] Mount handlers at `demo/app/api/chatbot/[...slug]/route.ts` via
-      `export const { GET, POST } = chatbot.handlers`
-- [ ] Replace direct imports of internal chat routes/components with `chatbot.Panel` and
-      config-driven integration
-- [ ] Keep existing UI refinements in demo, but route all chat runtime behavior through the
-      package instance
+#### 6.4 Build the real `Panel` component
 
-#### 6.5 Keep legacy artifact system demo-only
+`src/core/factory.ts` currently stubs `Panel` as `null`. This step makes it real.
 
-- [ ] Old document artifact implementation (`artifacts/code|text|sheet|image`) remains
-      demo-only and is not exported by package entrypoints
+- [ ] Build `src/components/Panel.tsx` — composes the full chat UI (messages, input,
+      sidebar, artifact renderer) using the components moved in 6.3
+- [ ] `Panel` reads resolved config from context (models, features, base path, artifacts)
+- [ ] Wire `Panel` into `Chatbot()` factory — replace the `null` stub
+- [ ] Verify `Panel` renders end-to-end using the in-memory storage adapter (no DB needed)
+
+#### 6.5 Create the thin demo app
+
+Demo is built fresh as a minimal consumer — it is not a copy of the existing app.
+`demo/` gets its own `package.json` and Next.js config (pnpm workspace package).
+
+- [ ] Create `demo/` as a pnpm workspace package pointing to root package via workspace dep
+- [ ] Create `demo/chatbot.config.ts` — initialize `Chatbot({...})` with models, prompts,
+      storage adapter (Drizzle), auth adapter, and feature flags
+- [ ] Create single catch-all API route:
+      `demo/app/(chat)/api/[...chatbot]/route.ts` → `export const { GET, POST, DELETE, PATCH } = chatbot.handlers`
+- [ ] Create chat pages that just mount Panel:
+      `demo/app/(chat)/page.tsx` and `demo/app/(chat)/chat/[id]/page.tsx` → `<chatbot.Panel />`
+- [ ] Copy auth pages (`app/(auth)/`) into `demo/app/(auth)/` — these are demo-specific UI
+- [ ] Add app shell: `demo/app/layout.tsx`, `demo/app/globals.css`, `demo/public/`
+- [ ] `demo/` has NO `components/chatbot/`, NO `hooks/`, NO chatbot UI of any kind
+
+#### 6.6 Keep legacy artifact system demo-only
+
+- [ ] Old document artifact implementation (`artifacts/code|text|sheet|image`) is demo-only —
+      copy to `demo/artifacts/` as reference examples, delete from root
 - [ ] New `defineArtifact` + `propose-action` flow is package-native and used by demo
-- [ ] Document the distinction in demo code comments/readme so consumers don't mix both paradigms
+- [ ] Document the distinction so consumers don't mix both paradigms
 
-#### 6.6 Validate package isolation and end-to-end behavior
+#### 6.7 Clean up root
+
+Once `src/` is the package and `demo/` is the consumer, the root should only hold
+package-level concerns.
+
+- [ ] Delete `app/`, `components/`, `hooks/`, `artifacts/` from root (fully migrated)
+- [ ] Delete `lib/` files that are now fully encapsulated in `src/` (keep only what's
+      referenced externally or still needed at root)
+- [ ] Confirm root `package.json` describes the package, not the demo app
+
+#### 6.8 Validate package isolation and end-to-end behavior
 
 - [ ] Run package checks from root (`pnpm check`, package typecheck/build)
 - [ ] Run demo checks from `demo/` (`pnpm dev`, `pnpm test` or scoped equivalents)
@@ -380,7 +413,7 @@ a consumer in `demo/`.
 - [ ] Confirm end-to-end flow: init → mount → component render → stream response →
       artifact propose/confirm → `onAction`
 
-#### 6.7 Exit criteria for Phase 6
+#### 6.9 Exit criteria for Phase 6
 
 - [ ] A new app can integrate with only three steps (initialize, mount handlers, render panel)
 - [ ] Deleting `demo/` does not break package build or typecheck

@@ -12,6 +12,7 @@ export type {
   ChatbotConfig,
   ChatbotFeatures,
   ChatModel,
+  ChatUser,
   PanelProps,
   ResolvedChatbotConfig,
   ResolvedFeatures,

@@ -1,3 +1,4 @@
+import type React from "react";
 import type { LanguageModel } from "ai";
 import type { z } from "zod";
 import type { ArtifactDefinition } from "../artifacts/types";
@@ -6,6 +7,14 @@ import type { ActionEvent } from "./types";
 
 export type AuthUser = { id: string; type?: string };
 export type AuthResolver = (request: Request) => Promise<AuthUser | null>;
+
+export type ChatUser = {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  isGuest?: boolean;
+};
 
 export type ChatModel = {
   id: string;
@@ -45,6 +54,7 @@ export type ChatbotConfig = {
   greetingSubtext?: string;
   features?: ChatbotFeatures;
   maxMessagesPerHour?: number;
+  basePath?: string;
 };
 
 export type ResolvedChatbotConfig = {
@@ -60,10 +70,14 @@ export type ResolvedChatbotConfig = {
   greetingSubtext: string;
   features: ResolvedFeatures;
   maxMessagesPerHour: number;
+  basePath: string;
 };
 
 export type PanelProps = {
+  user?: ChatUser;
+  onSignOut?: () => Promise<void>;
   context?: Record<string, unknown>;
   onAction?: (action: ActionEvent) => void;
   className?: string;
+  children?: React.ReactNode;
 };
