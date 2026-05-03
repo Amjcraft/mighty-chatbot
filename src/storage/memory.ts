@@ -1,5 +1,7 @@
+// To-do: Not a huge fan of this memory adapter. Definitely let's look into replacing this in the future.
+
 import type { Chat, Document, Message, Vote } from "../core/types";
-import type { StorageAdapter, PaginationOptions } from "./adapter";
+import type { PaginationOptions, StorageAdapter } from "./adapter";
 
 export function MemoryAdapter(): StorageAdapter {
   const chats = new Map<string, Chat>();
@@ -12,6 +14,10 @@ export function MemoryAdapter(): StorageAdapter {
       const c = chats.get(id);
       if (!c || c.userId !== userId) return null;
       return c;
+    },
+
+    getChatById(id: string): Promise<Chat | null> {
+      return Promise.resolve(chats.get(id) ?? null);
     },
 
     async getChatsByUserId(userId: string, options: PaginationOptions = {}) {
@@ -51,7 +57,7 @@ export function MemoryAdapter(): StorageAdapter {
 
     async getMessagesByChatId(chatId: string) {
       return (messages.get(chatId) ?? []).sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
       );
     },
 
@@ -86,7 +92,7 @@ export function MemoryAdapter(): StorageAdapter {
         const chat = chats.get(chatId);
         if (!chat || chat.userId !== userId) continue;
         count += msgs.filter(
-          (m) => m.role === "user" && m.createdAt >= cutoff,
+          (m) => m.role === "user" && m.createdAt >= cutoff
         ).length;
       }
       return count;
@@ -121,7 +127,7 @@ export function MemoryAdapter(): StorageAdapter {
 
     async getDocumentsById(id: string) {
       return (documents.get(id) ?? []).sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
       );
     },
 
@@ -138,7 +144,7 @@ export function MemoryAdapter(): StorageAdapter {
       if (!versions) return;
       documents.set(
         id,
-        versions.filter((d) => d.createdAt <= timestamp),
+        versions.filter((d) => d.createdAt <= timestamp)
       );
     },
 

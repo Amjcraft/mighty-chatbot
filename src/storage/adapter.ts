@@ -18,6 +18,7 @@ export interface StorageAdapter {
   saveMessages(messages: Message[]): Promise<void>;
 
   // Optional — implement to enable
+  getChatById?(id: string): Promise<Chat | null>; // raw lookup without ownership check
   updateChatTitle?(chatId: string, title: string): Promise<void>;
   updateMessage?(id: string, parts: unknown): Promise<void>;
   getMessageCountByUserId?(userId: string, windowHours: number): Promise<number>;

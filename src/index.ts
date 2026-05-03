@@ -1,6 +1,8 @@
 export type { ArtifactDefinition } from "./artifacts/types";
 export { defineArtifact } from "./artifacts/types";
 export type {
+  AuthResolver,
+  AuthUser,
   ChatbotConfig,
   ChatbotFeatures,
   ChatModel,

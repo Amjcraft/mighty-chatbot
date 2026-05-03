@@ -4,7 +4,7 @@ import {
   deleteChatById,
   deleteAllChatsByUserId,
   deleteDocumentsByIdAfterTimestamp,
-  getChatById,
+  getChatById as getChatByIdQuery,
   getChatsByUserId,
   getDocumentById,
   getDocumentsById,
@@ -26,9 +26,14 @@ import type { StorageAdapter, PaginationOptions } from "../adapter";
 export function DrizzleAdapter(): StorageAdapter {
   return {
     async getChat(id: string, userId: string) {
-      const c = await getChatById({ id });
+      const c = await getChatByIdQuery({ id });
       if (!c || c.userId !== userId) return null;
       return c;
+    },
+
+    async getChatById(id: string) {
+      const c = await getChatByIdQuery({ id });
+      return c ?? null;
     },
 
     async getChatsByUserId(userId: string, options: PaginationOptions = {}) {
