@@ -260,20 +260,18 @@ mighty-chatbot/
 - [x] Remove parallel route artifacts (`app/(chat)/default.tsx`, slot references in layout)
 - [x] Consolidate all DB access behind a single `queries.ts` interface (it mostly is already)
 
-### Phase 2 — Define the contracts
+### Phase 2 — Define the contracts ✅
 
-- [ ] Write `StorageAdapter` interface in `src/storage/adapter.ts`
-- [ ] Write `ArtifactDefinition` interface + `defineArtifact` in `src/artifacts/types.ts`
-- [ ] Write `ChatbotConfig` type in `src/core/config.ts`
-- [ ] Write `ChatbotInstance` type and stub `Chatbot()` factory
+- [x] Write `StorageAdapter` interface in `src/storage/adapter.ts`
+- [x] Write `ArtifactDefinition` interface + `defineArtifact` in `src/artifacts/types.ts`
+- [x] Write `ChatbotConfig` type in `src/core/config.ts`
+- [x] Write `ChatbotInstance` type and stub `Chatbot()` factory
 
-These are just types and stubs — no implementation yet. Getting the shape right before building.
+### Phase 3 — Storage adapter ✅
 
-### Phase 3 — Storage adapter
-
-- [ ] Wrap existing `lib/db/queries.ts` in a `DrizzleAdapter` that satisfies `StorageAdapter`
-- [ ] Verify the interface covers all query patterns used by API routes
-- [ ] Write an in-memory adapter for testing / zero-config dev
+- [x] Wrap existing `lib/db/queries.ts` in a `DrizzleAdapter` that satisfies `StorageAdapter`
+- [x] Verify the interface covers all query patterns used by API routes
+- [x] Write an in-memory adapter for testing / zero-config dev
 
 ### Phase 4 — Route handlers
 
