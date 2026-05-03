@@ -281,11 +281,42 @@ mighty-chatbot/
 
 ### Phase 5 — Artifact system
 
-- [ ] Build `ArtifactRegistry` from the `artifacts` config array
-- [ ] Inject artifact schemas into the AI system prompt
-- [ ] Refactor `ArtifactRenderer` to look up the runtime registry
-- [ ] Convert or remove existing built-in artifacts (code, text, image, sheet) —
-      keep as demonstrative examples or delete; they're not part of the core
+**Decision:** The existing `artifacts/code/`, `artifacts/text/`, `artifacts/sheet/`, `artifacts/image/`
+in the Next.js app are left untouched. They move to `demo/` in Phase 6. Phase 5 only builds
+the new propose-action system inside `src/`.
+
+**Paradigm note:** The old artifact system ("document artifacts") has the AI trigger server-side
+LLM calls to generate full documents. The new system has the AI emit structured JSON via a
+`propose-action` tool — the host app's React component renders it and an `onAction` callback
+fires on confirm. These are fundamentally different; the new system does not replace the old
+one at the code level — it just doesn't ship in the library core.
+
+#### Tasks
+
+- [x] **`src/artifacts/registry.ts`** — `buildRegistry(artifacts: ArtifactDefinition[])` returns
+      a `Map<string, ArtifactDefinition>`. Used by both the chat handler (tool + prompt injection)
+      and the client renderer.
+
+- [x] **`src/ai/tools/propose-action.ts`** — a dynamic AI tool built from the registry. The tool
+      description lists available artifact types; input schema is `{ type: string, data: unknown }`.
+      On execute, validate `data` against the Zod schema for the given `type` (reject with error if
+      type unregistered or data invalid), then write a structured data event to the stream.
+
+- [x] **`src/ai/prompts.ts`** — `buildSystemPrompt(base: string, registry: Map)` appends a
+      "Available artifact types" block to the system prompt. Each entry includes the type name and
+      a JSON Schema representation of its Zod schema so the AI knows exactly what shape to produce.
+
+- [x] **Update `src/handlers/chat.ts`** — when `config.artifacts` is non-empty, pass the
+      `propose-action` tool to `streamText` and use the augmented system prompt instead of
+      `config.systemPrompt` directly.
+
+- [x] **`src/components/ArtifactRenderer.tsx`** — client component stub. Takes the artifacts
+      config array and an artifact message part (type + data). Looks up the matching
+      `ArtifactDefinition`, renders its `component` with the validated data, `onConfirm`, and
+      `onDismiss` props. Full wiring into `Panel` is Phase 6.
+
+- [x] **Leave existing artifacts alone** — `artifacts/code/`, `artifacts/text/`, `artifacts/sheet/`,
+      `artifacts/image/` stay in place; they are not part of `src/` and move to `demo/` in Phase 6.
 
 ### Phase 6 — Package + demo app
 

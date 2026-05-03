@@ -49,5 +49,8 @@
   },
   "[mdx]": {
     "editor.defaultFormatter": "biomejs.biome"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "npx tsc": true
   }
 }

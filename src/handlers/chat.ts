@@ -8,6 +8,9 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
+import { buildSystemPrompt } from "../ai/prompts";
+import { buildProposeActionTool } from "../ai/tools/propose-action";
+import { buildRegistry } from "../artifacts/registry";
 import type { ResolvedChatbotConfig } from "../core/config";
 import type { Message } from "../core/types";
 import { badRequest, forbidden, notFound, unauthorized } from "./utils";
@@ -38,7 +41,7 @@ const postBodySchema = z.object({
         id: z.string(),
         role: z.enum(["user", "assistant"]),
         parts: z.array(z.record(z.unknown())),
-      }),
+      })
     )
     .optional(),
   selectedChatModel: z.string(),
@@ -62,9 +65,7 @@ function dbToUIMessages(messages: Message[]): UIMessage[] {
   }));
 }
 
-function titleFromParts(
-  parts: Array<{ type: string; text?: string }>,
-): string {
+function titleFromParts(parts: Array<{ type: string; text?: string }>): string {
   const text = parts
     .filter((p) => p.type === "text")
     .map((p) => p.text ?? "")
@@ -74,7 +75,7 @@ function titleFromParts(
 
 export async function handleChatPost(
   request: Request,
-  { config }: Ctx,
+  { config }: Ctx
 ): Promise<Response> {
   let body: z.infer<typeof postBodySchema>;
   try {
@@ -133,10 +134,10 @@ export async function handleChatPost(
         (m.parts as Array<Record<string, unknown>>)
           .filter(
             (p) =>
-              p.state === "approval-responded" || p.state === "output-denied",
+              p.state === "approval-responded" || p.state === "output-denied"
           )
-          .map((p) => [String(p.toolCallId ?? ""), p]),
-      ),
+          .map((p) => [String(p.toolCallId ?? ""), p])
+      )
     );
     uiMessages = base.map((msg) => ({
       ...msg,
@@ -176,18 +177,33 @@ export async function handleChatPost(
 
   const modelMessages = await convertToModelMessages(uiMessages);
 
+  const registry =
+    config.artifacts.length > 0 ? buildRegistry(config.artifacts) : null;
+  const systemPrompt = registry
+    ? buildSystemPrompt(config.systemPrompt, registry)
+    : config.systemPrompt;
+
   const stream = createUIMessageStream({
     originalMessages: isToolApprovalFlow ? uiMessages : undefined,
     execute: async ({ writer: dataStream }) => {
+      const proposeActionTool = registry
+        ? buildProposeActionTool({ registry, dataStream })
+        : null;
+
       const result = streamText({
         model: config.getLanguageModel(chatModelId),
-        system: config.systemPrompt,
+        system: systemPrompt,
         messages: modelMessages,
         stopWhen: stepCountIs(5),
+        tools: proposeActionTool
+          ? { "propose-action": proposeActionTool }
+          : undefined,
         experimental_telemetry: { isEnabled: false },
       });
 
-      dataStream.merge(result.toUIMessageStream({ sendReasoning: isReasoningModel }));
+      dataStream.merge(
+        result.toUIMessageStream({ sendReasoning: isReasoningModel })
+      );
 
       if (title) {
         dataStream.write({ type: "data-chat-title", data: title });
@@ -225,7 +241,7 @@ export async function handleChatPost(
             createdAt: new Date(),
             attachments: [],
             chatId: id,
-          })),
+          }))
         );
       }
     },
@@ -237,7 +253,7 @@ export async function handleChatPost(
 
 export async function handleChatDelete(
   request: Request,
-  { config }: Ctx,
+  { config }: Ctx
 ): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");

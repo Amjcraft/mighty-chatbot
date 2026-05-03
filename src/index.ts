@@ -1,5 +1,11 @@
+export { buildSystemPrompt } from "./ai/prompts";
+export { buildProposeActionTool } from "./ai/tools/propose-action";
+export type { ArtifactRegistry } from "./artifacts/registry";
+export { buildRegistry } from "./artifacts/registry";
 export type { ArtifactDefinition } from "./artifacts/types";
 export { defineArtifact } from "./artifacts/types";
+export type { ArtifactMessagePart } from "./components/ArtifactRenderer";
+export { ArtifactRenderer } from "./components/ArtifactRenderer";
 export type {
   AuthResolver,
   AuthUser,
