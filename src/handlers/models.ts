@@ -2,10 +2,7 @@ import type { ResolvedChatbotConfig } from "../core/config";
 
 type Ctx = { config: ResolvedChatbotConfig };
 
-export async function handleModelsGet(
-  _request: Request,
-  { config }: Ctx,
-): Promise<Response> {
+export function handleModelsGet(_request: Request, { config }: Ctx): Response {
   const models = config.models.map(({ id, name, provider, description }) => ({
     id,
     name,

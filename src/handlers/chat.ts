@@ -88,7 +88,9 @@ export async function handleChatPost(
     body;
 
   const user = await config.auth(request);
-  if (!user) return unauthorized();
+  if (!user) {
+    return unauthorized();
+  }
 
   const chatModelId = config.models.some((m) => m.id === selectedChatModel)
     ? selectedChatModel
@@ -104,15 +106,18 @@ export async function handleChatPost(
   const isToolApprovalFlow = Boolean(messages);
 
   // Use raw lookup so we can distinguish "not found" from "wrong owner"
-  const fetchChat = config.storage.getChatById
-    ? (chatId: string) => config.storage.getChatById!(chatId)
+  const { getChatById } = config.storage;
+  const fetchChat = getChatById
+    ? (chatId: string) => getChatById(chatId)
     : (chatId: string) => config.storage.getChat(chatId, user.id);
 
   const existingChat = await fetchChat(id);
   let title: string | null = null;
 
   if (existingChat) {
-    if (existingChat.userId !== user.id) return forbidden();
+    if (existingChat.userId !== user.id) {
+      return forbidden();
+    }
   } else if (message?.role === "user") {
     title = titleFromParts(message.parts);
     await config.storage.saveChat({
@@ -131,7 +136,7 @@ export async function handleChatPost(
     const base = dbToUIMessages(dbMessages);
     const approvalStates = new Map(
       messages.flatMap((m) =>
-        (m.parts as Array<Record<string, unknown>>)
+        (m.parts as Record<string, unknown>[])
           .filter(
             (p) =>
               p.state === "approval-responded" || p.state === "output-denied"
@@ -257,14 +262,22 @@ export async function handleChatDelete(
 ): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
-  if (!id) return badRequest("Parameter id is required.");
+  if (!id) {
+    return badRequest("Parameter id is required.");
+  }
 
   const user = await config.auth(request);
-  if (!user) return unauthorized();
+  if (!user) {
+    return unauthorized();
+  }
 
   const chat = await config.storage.getChat(id, user.id);
-  if (!chat) return notFound("Chat not found");
-  if (chat.userId !== user.id) return forbidden();
+  if (!chat) {
+    return notFound("Chat not found");
+  }
+  if (chat.userId !== user.id) {
+    return forbidden();
+  }
 
   await config.storage.deleteChat(id);
   return Response.json({ id }, { status: 200 });

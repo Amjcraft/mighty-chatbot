@@ -1,11 +1,15 @@
 import type React from "react";
-import type { ChatbotConfig, PanelProps, ResolvedChatbotConfig } from "./config";
+import type {
+  ChatbotConfig,
+  PanelProps,
+  ResolvedChatbotConfig,
+} from "./config";
 import { createDispatcher } from "./dispatcher";
 
 type RouteHandlerContext = { params: Promise<{ slug: string[] }> };
 type RouteHandler = (
   request: Request,
-  context: RouteHandlerContext,
+  context: RouteHandlerContext
 ) => Promise<Response>;
 
 export type ChatbotInstance = {

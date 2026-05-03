@@ -13,7 +13,7 @@ export interface ArtifactDefinition<T extends z.ZodType> {
 }
 
 export function defineArtifact<T extends z.ZodType>(
-  def: ArtifactDefinition<T>,
+  def: ArtifactDefinition<T>
 ): ArtifactDefinition<T> {
   return def;
 }

@@ -4,7 +4,6 @@ import type { ArtifactRegistry } from "../../artifacts/registry";
 
 const proposeActionInputSchema = z.object({
   type: z.string().describe("The artifact type to propose."),
-  // biome-ignore lint/suspicious/noExplicitAny: tool input data is validated at runtime against the artifact's Zod schema
   data: z.any().describe("The artifact data matching the type's schema."),
 });
 
@@ -24,7 +23,7 @@ export function buildProposeActionTool({
   return tool({
     description: `Propose a structured action to the user. Available types: ${availableTypes}. The 'data' field must match the JSON Schema for the given type.`,
     inputSchema: proposeActionInputSchema,
-    execute: async ({
+    execute: ({
       type,
       data,
     }: ProposeActionInput): Promise<{
@@ -50,7 +49,7 @@ export function buildProposeActionTool({
         data: { type, data: result.data },
       });
 
-      return { type, data: result.data };
+      return Promise.resolve({ type, data: result.data });
     },
   });
 }

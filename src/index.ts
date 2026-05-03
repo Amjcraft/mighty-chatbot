@@ -4,8 +4,8 @@ export type { ArtifactRegistry } from "./artifacts/registry";
 export { buildRegistry } from "./artifacts/registry";
 export type { ArtifactDefinition } from "./artifacts/types";
 export { defineArtifact } from "./artifacts/types";
-export type { ArtifactMessagePart } from "./components/ArtifactRenderer";
-export { ArtifactRenderer } from "./components/ArtifactRenderer";
+export type { ArtifactMessagePart } from "./components/artifact-renderer";
+export { ArtifactRenderer } from "./components/artifact-renderer";
 export type {
   AuthResolver,
   AuthUser,

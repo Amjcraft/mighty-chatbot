@@ -18,20 +18,30 @@ type Ctx = { config: ResolvedChatbotConfig };
 
 export async function handleVoteGet(
   request: Request,
-  { config }: Ctx,
+  { config }: Ctx
 ): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const chatId = searchParams.get("chatId");
-  if (!chatId) return badRequest("Parameter chatId is required.");
+  if (!chatId) {
+    return badRequest("Parameter chatId is required.");
+  }
 
   const user = await config.auth(request);
-  if (!user) return unauthorized();
+  if (!user) {
+    return unauthorized();
+  }
 
   const chat = await config.storage.getChat(chatId, user.id);
-  if (!chat) return notFound("Chat not found");
-  if (chat.userId !== user.id) return forbidden();
+  if (!chat) {
+    return notFound("Chat not found");
+  }
+  if (chat.userId !== user.id) {
+    return forbidden();
+  }
 
-  if (!config.storage.getVotesByChatId) return notImplemented();
+  if (!config.storage.getVotesByChatId) {
+    return notImplemented();
+  }
 
   const votes = await config.storage.getVotesByChatId(chatId);
   return Response.json(votes, { status: 200 });
@@ -39,7 +49,7 @@ export async function handleVoteGet(
 
 export async function handleVotePatch(
   request: Request,
-  { config }: Ctx,
+  { config }: Ctx
 ): Promise<Response> {
   let body: z.infer<typeof voteSchema>;
   try {
@@ -49,14 +59,26 @@ export async function handleVotePatch(
   }
 
   const user = await config.auth(request);
-  if (!user) return unauthorized();
+  if (!user) {
+    return unauthorized();
+  }
 
   const chat = await config.storage.getChat(body.chatId, user.id);
-  if (!chat) return notFound("Chat not found");
-  if (chat.userId !== user.id) return forbidden();
+  if (!chat) {
+    return notFound("Chat not found");
+  }
+  if (chat.userId !== user.id) {
+    return forbidden();
+  }
 
-  if (!config.storage.voteMessage) return notImplemented();
+  if (!config.storage.voteMessage) {
+    return notImplemented();
+  }
 
-  await config.storage.voteMessage(body.chatId, body.messageId, body.type === "up");
+  await config.storage.voteMessage(
+    body.chatId,
+    body.messageId,
+    body.type === "up"
+  );
   return new Response("Message voted", { status: 200 });
 }

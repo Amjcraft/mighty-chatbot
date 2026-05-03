@@ -318,12 +318,74 @@ one at the code level — it just doesn't ship in the library core.
 - [x] **Leave existing artifacts alone** — `artifacts/code/`, `artifacts/text/`, `artifacts/sheet/`,
       `artifacts/image/` stay in place; they are not part of `src/` and move to `demo/` in Phase 6.
 
-### Phase 6 — Package + demo app
+### Phase 6 — Split framework from package core
 
-- [ ] Move current Next.js app to `demo/`
-- [ ] Set up `src/` as the published package entry point
-- [ ] Wire the demo app to use the library via the three integration steps
-- [ ] Confirm end-to-end: init → mount → component → artifact confirm → onAction
+**Goal:** hard-separate reusable chatbot package code from Next.js app/framework code.
+After this phase, `src/` is framework-minimal package code and the current app becomes
+a consumer in `demo/`.
+
+#### 6.1 Define the boundary (before moving files)
+
+- [x] `src/` must not import from `app/`, `components/chatbot/`, `lib/db/`, `artifacts/`,
+      or any Next.js app-only path aliases
+- [ ] Package-allowed deps: `react`, `react-dom`, `ai`, `zod`, and package-owned utilities
+- [ ] Framework-specific code lives in adapters at the edge (`src/handlers`, optional
+      `src/adapters/next`) with no leakage into core contracts (`src/core`, `src/storage`,
+      `src/artifacts`)
+- [x] Add an explicit rule/check (Biome lint rule or script) that fails on forbidden imports
+      in `src/`
+
+#### 6.2 Prepare package entrypoints and exports
+
+- [ ] Promote `src/index.ts` to the only default public surface for `Chatbot`,
+      `defineArtifact`, and core types
+- [ ] Add subpath exports for stable extension points only (for example:
+      `mighty-chatbot/adapters/drizzle`)
+- [ ] Ensure no deep imports are required from consumer apps
+- [ ] Verify package types resolve from exported entrypoints only
+
+#### 6.3 Move app implementation to `demo/`
+
+- [ ] Move current Next.js app directories into `demo/`:
+      `app/`, `components/`, `hooks/`, `artifacts/`, `public/`, `tests/` (or keep top-level
+      tests temporarily if needed)
+- [ ] Move/duplicate Next.js config files to `demo/`:
+      `next.config.ts`, `postcss.config.mjs`, `playwright.config.ts`, and demo-local env example
+- [ ] Keep package build config at repo root; keep demo build/dev config under `demo/`
+- [ ] Update TS path aliases so demo paths (`@/...`) resolve inside `demo/` without reaching
+      into package internals except through package exports
+
+#### 6.4 Wire demo as a consumer (not friend code)
+
+- [ ] Create `demo/chatbot.config.ts` using `Chatbot({...})`
+- [ ] Mount handlers at `demo/app/api/chatbot/[...slug]/route.ts` via
+      `export const { GET, POST } = chatbot.handlers`
+- [ ] Replace direct imports of internal chat routes/components with `chatbot.Panel` and
+      config-driven integration
+- [ ] Keep existing UI refinements in demo, but route all chat runtime behavior through the
+      package instance
+
+#### 6.5 Keep legacy artifact system demo-only
+
+- [ ] Old document artifact implementation (`artifacts/code|text|sheet|image`) remains
+      demo-only and is not exported by package entrypoints
+- [ ] New `defineArtifact` + `propose-action` flow is package-native and used by demo
+- [ ] Document the distinction in demo code comments/readme so consumers don't mix both paradigms
+
+#### 6.6 Validate package isolation and end-to-end behavior
+
+- [ ] Run package checks from root (`pnpm check`, package typecheck/build)
+- [ ] Run demo checks from `demo/` (`pnpm dev`, `pnpm test` or scoped equivalents)
+- [ ] Confirm no circular dependency between package and demo
+- [ ] Confirm end-to-end flow: init → mount → component render → stream response →
+      artifact propose/confirm → `onAction`
+
+#### 6.7 Exit criteria for Phase 6
+
+- [ ] A new app can integrate with only three steps (initialize, mount handlers, render panel)
+- [ ] Deleting `demo/` does not break package build or typecheck
+- [ ] Package can be published/packed without shipping Next.js app internals
+- [ ] Demo can be replaced later by another host app with no package source changes
 
 ### Phase 7 — Documentation + DX
 

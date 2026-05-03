@@ -9,7 +9,10 @@ export type PaginationOptions = {
 export interface StorageAdapter {
   // Chats
   getChat(id: string, userId: string): Promise<Chat | null>;
-  getChatsByUserId(userId: string, options?: PaginationOptions): Promise<Chat[]>;
+  getChatsByUserId(
+    userId: string,
+    options?: PaginationOptions
+  ): Promise<Chat[]>;
   saveChat(chat: Chat): Promise<void>;
   deleteChat(id: string): Promise<void>;
 
@@ -21,10 +24,17 @@ export interface StorageAdapter {
   getChatById?(id: string): Promise<Chat | null>; // raw lookup without ownership check
   updateChatTitle?(chatId: string, title: string): Promise<void>;
   updateMessage?(id: string, parts: unknown): Promise<void>;
-  getMessageCountByUserId?(userId: string, windowHours: number): Promise<number>;
+  getMessageCountByUserId?(
+    userId: string,
+    windowHours: number
+  ): Promise<number>;
 
   // Voting — implement both to enable voting feature
-  voteMessage?(chatId: string, messageId: string, isUpvoted: boolean): Promise<void>;
+  voteMessage?(
+    chatId: string,
+    messageId: string,
+    isUpvoted: boolean
+  ): Promise<void>;
   getVotesByChatId?(chatId: string): Promise<Vote[]>;
 
   // Documents — implement to enable artifact persistence
@@ -32,7 +42,10 @@ export interface StorageAdapter {
   getDocumentById?(id: string): Promise<Document | null>;
   getDocumentsById?(id: string): Promise<Document[]>;
   updateDocumentContent?(id: string, content: string): Promise<void>;
-  deleteDocumentsByIdAfterTimestamp?(id: string, timestamp: Date): Promise<void>;
+  deleteDocumentsByIdAfterTimestamp?(
+    id: string,
+    timestamp: Date
+  ): Promise<void>;
 
   // Bulk operations
   deleteAllChatsByUserId?(userId: string): Promise<void>;

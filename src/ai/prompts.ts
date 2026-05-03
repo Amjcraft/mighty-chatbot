@@ -54,7 +54,9 @@ function zodDefToJsonSchema(def: z.ZodTypeAny["_def"]): JsonSchemaNode {
           value._def.typeName === "ZodOptional" ||
           value._def.typeName === "ZodNullable" ||
           inner !== undefined;
-        if (!isOptional) required.push(key);
+        if (!isOptional) {
+          required.push(key);
+        }
       }
       return {
         type: "object",
@@ -79,7 +81,9 @@ export function buildSystemPrompt(
   base: string,
   registry: ArtifactRegistry
 ): string {
-  if (registry.size === 0) return base;
+  if (registry.size === 0) {
+    return base;
+  }
 
   const lines: string[] = [
     "",

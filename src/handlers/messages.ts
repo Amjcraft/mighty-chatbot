@@ -5,16 +5,19 @@ type Ctx = { config: ResolvedChatbotConfig };
 
 export async function handleMessagesGet(
   request: Request,
-  { config }: Ctx,
+  { config }: Ctx
 ): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const chatId = searchParams.get("chatId");
-  if (!chatId) return badRequest("chatId required");
+  if (!chatId) {
+    return badRequest("chatId required");
+  }
 
   const user = await config.auth(request);
 
-  const fetchChat = config.storage.getChatById
-    ? (id: string) => config.storage.getChatById!(id)
+  const { getChatById } = config.storage;
+  const fetchChat = getChatById
+    ? (id: string) => getChatById(id)
     : (_id: string) => Promise.resolve(null);
 
   const [chat, messages] = await Promise.all([
