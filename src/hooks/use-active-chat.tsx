@@ -22,12 +22,12 @@ import { getChatHistoryPaginationKey } from "@/components/chatbot/sidebar-histor
 import { toast } from "@/components/chatbot/toast";
 import type { VisibilityType } from "@/components/chatbot/visibility-selector";
 import { useAutoResume } from "@/hooks/use-auto-resume";
-import { useChatbotConfig } from "@/src/core/context";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import type { Vote } from "@/lib/db/schema";
 import { ChatbotError } from "@/lib/errors";
 import type { ChatMessage } from "@/lib/types";
 import { fetcher, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
+import { useChatbotConfig } from "@/src/core/context";
 
 type ActiveChatContextValue = {
   chatId: string;
@@ -85,9 +85,7 @@ export function ActiveChatProvider({ children }: { children: ReactNode }) {
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
 
   const { data: chatData, isLoading } = useSWR(
-    isNewChat
-      ? null
-      : `${basePath}/messages?chatId=${chatId}`,
+    isNewChat ? null : `${basePath}/messages?chatId=${chatId}`,
     fetcher,
     { revalidateOnFocus: false }
   );
@@ -221,11 +219,7 @@ export function ActiveChatProvider({ children }: { children: ReactNode }) {
     const query = params.get("query");
     if (query && !hasAppendedQueryRef.current) {
       hasAppendedQueryRef.current = true;
-      window.history.replaceState(
-        {},
-        "",
-        `/chat/${chatId}`
-      );
+      window.history.replaceState({}, "", `/chat/${chatId}`);
       sendMessage({
         role: "user" as const,
         parts: [{ type: "text", text: query }],

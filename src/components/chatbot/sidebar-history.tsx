@@ -23,10 +23,10 @@ import {
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
-import type { Chat } from "@/src/core/types";
 import { fetcher } from "@/lib/utils";
 import type { ChatUser } from "@/src/core/config";
 import { useChatbotConfig } from "@/src/core/context";
+import type { Chat } from "@/src/core/types";
 import { LoaderIcon } from "./icons";
 import { ChatItem } from "./sidebar-history-item";
 

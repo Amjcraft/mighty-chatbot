@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
-import { useArtifact, initialArtifactData } from "@/hooks/use-artifact";
+import { initialArtifactData, useArtifact } from "@/hooks/use-artifact";
 import { useChatbotConfig } from "@/src/core/context";
 import { artifactDefinitions } from "./artifact";
 import { useDataStream } from "./data-stream-provider";

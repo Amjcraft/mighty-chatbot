@@ -67,8 +67,9 @@ export function AppSidebar({
       ),
       [],
       {
-      revalidate: false,
-    });
+        revalidate: false,
+      }
+    );
 
     fetch(`${basePath}/history`, {
       method: "DELETE",
