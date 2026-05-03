@@ -16,8 +16,8 @@ import { unstable_serialize } from "swr/infinite";
 import {
   getChatHistoryPaginationKey,
   SidebarHistory,
-} from "@/components/chat/sidebar-history";
-import { SidebarUserNav } from "@/components/chat/sidebar-user-nav";
+} from "@/components/chatbot/sidebar-history";
+import { SidebarUserNav } from "@/components/chatbot/sidebar-user-nav";
 import {
   Sidebar,
   SidebarContent,

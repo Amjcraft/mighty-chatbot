@@ -2,7 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 
-import { LoaderIcon } from "@/components/chat/icons";
+import { LoaderIcon } from "@/components/chatbot/icons";
 
 import { Button } from "../ui/button";
 

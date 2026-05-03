@@ -18,8 +18,7 @@ export async function GET(request: Request) {
   });
 
   if (token) {
-    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-    return NextResponse.redirect(new URL(`${base}/`, request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return signIn("guest", { redirect: true, redirectTo: redirectUrl });

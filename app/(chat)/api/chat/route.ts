@@ -7,7 +7,6 @@ import {
   stepCountIs,
   streamText,
 } from "ai";
-import { checkBotId } from "botid/server";
 import { after } from "next/server";
 import { createResumableStreamContext } from "resumable-stream";
 import { auth, type UserType } from "@/app/(auth)/auth";
@@ -37,7 +36,7 @@ import {
   updateChatTitleById,
   updateMessage,
 } from "@/lib/db/queries";
-import type { DBMessage } from "@/lib/db/schema";
+import type { DBMessage } from "@/lib/db/queries";
 import { ChatbotError } from "@/lib/errors";
 import { checkIpRateLimit } from "@/lib/ratelimit";
 import type { ChatMessage } from "@/lib/types";
@@ -71,10 +70,7 @@ export async function POST(request: Request) {
     const { id, message, messages, selectedChatModel, selectedVisibilityType } =
       requestBody;
 
-    const [, session] = await Promise.all([
-      checkBotId().catch(() => null),
-      auth(),
-    ]);
+    const session = await auth();
 
     if (!session?.user) {
       return new ChatbotError("unauthorized:chat").toResponse();

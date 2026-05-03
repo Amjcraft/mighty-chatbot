@@ -1,5 +1,6 @@
 import type { Geo } from "@vercel/functions";
-import type { ArtifactKind } from "@/components/chat/artifact";
+import { config } from "@/chatbot.config";
+import type { ArtifactKind } from "@/components/chatbot/artifact";
 
 export const artifactsPrompt = `
 Artifacts is a side panel that displays content alongside the conversation. It supports scripts (code), documents (text), and spreadsheets. Changes appear in real-time.
@@ -44,9 +45,7 @@ CRITICAL RULES:
 - ONLY when the user explicitly asks for suggestions on an existing document
 `;
 
-export const regularPrompt = `You are a helpful assistant. Keep responses concise and direct.
-
-When asked to write, create, or build something, do it immediately. Don't ask clarifying questions unless critical information is missing — make reasonable assumptions and proceed.`;
+export const regularPrompt = config.systemPrompt;
 
 export type RequestHints = {
   latitude: Geo["latitude"];

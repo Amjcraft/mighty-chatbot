@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { config } from "@/chatbot.config";
 
 export const Greeting = () => {
   return (
@@ -9,7 +10,7 @@ export const Greeting = () => {
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        What can I help with?
+        {config.greeting}
       </motion.div>
       <motion.div
         animate={{ opacity: 1, y: 0 }}
@@ -17,7 +18,7 @@ export const Greeting = () => {
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.5, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        Ask a question, write code, or explore ideas.
+        {config.greetingSubtext}
       </motion.div>
     </div>
   );

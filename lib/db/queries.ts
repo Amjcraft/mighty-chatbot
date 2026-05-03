@@ -14,8 +14,8 @@ import {
 } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import type { ArtifactKind } from "@/components/chat/artifact";
-import type { VisibilityType } from "@/components/chat/visibility-selector";
+import type { ArtifactKind } from "@/components/chatbot/artifact";
+import type { VisibilityType } from "@/components/chatbot/visibility-selector";
 import { ChatbotError } from "../errors";
 import { generateUUID } from "../utils";
 import {
@@ -630,3 +630,5 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
     );
   }
 }
+
+export type { DBMessage } from "./schema";

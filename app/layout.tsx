@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { config } from "@/chatbot.config";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -8,8 +9,8 @@ import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  title: config.name,
+  description: `${config.name} — AI assistant`,
 };
 
 export const viewport = {
@@ -75,7 +76,7 @@ export default function RootLayout({
           enableSystem
         >
           <SessionProvider
-            basePath={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth`}
+            basePath="/api/auth"
           >
             <TooltipProvider>{children}</TooltipProvider>
           </SessionProvider>

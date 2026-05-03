@@ -1,7 +1,7 @@
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import { SparklesIcon, VercelIcon } from "@/components/chat/icons";
-import { Preview } from "@/components/chat/preview";
+import { SparklesIcon, VercelIcon } from "@/components/chatbot/icons";
+import { Preview } from "@/components/chatbot/preview";
 
 export default function AuthLayout({
   children,
