@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     prefetchInlining: true,
     inlineCss: true,
   },
+  allowedDevOrigins: ["192.168.0.200"],
 };
 
 export default nextConfig;

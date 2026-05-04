@@ -15,8 +15,6 @@
     "utils": "@/lib/utils",
     "ui": "@/components/ui",
     "lib": "@/lib",
-    "hooks": "@/hooks",
-    "core": "@/src/core",
-    "aertifacts": "@/src/artifacts"
+    "hooks": "@/hooks"
   }
 }

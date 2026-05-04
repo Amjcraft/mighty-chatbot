@@ -24,6 +24,8 @@
       "@/components/ai-elements/*": ["./src/components/ai-elements/*"],
       "@/components/theme-provider": ["./src/components/theme-provider"],
       "@/hooks/*": ["./src/hooks/*"],
+      "@/src/core/*": ["./src/core/*"],
+      "@/artifacts/*": ["./src/artifacts/*"],
       "@/*": ["./*"]
     },
     "strictNullChecks": true

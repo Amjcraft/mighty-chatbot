@@ -1,8 +1,7 @@
+import { ThemeProvider, TooltipProvider } from "mighty-chatbot";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/src/components/theme-provider";
-import { TooltipProvider } from "@/src/components/ui/tooltip";
 import "./globals.css";
 
 export const metadata: Metadata = {

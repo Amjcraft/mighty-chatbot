@@ -1,3 +1,5 @@
+"use client";
+
 import { chatbot } from "../../chatbot.config";
 
 export default function ChatLayout({

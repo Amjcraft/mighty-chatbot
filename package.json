@@ -4,14 +4,14 @@
   "private": true,
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
     }
   },
   "scripts": {
-    "dev": "next dev --turbo",
-    "build": "tsx lib/db/migrate && next build",
-    "start": "next start",
+    "build:lib": "tsup",
+    "dev:lib": "tsup --watch",
     "check": "ultracite check && pnpm check:boundaries",
     "check:boundaries": "node scripts/check-src-boundaries.mjs",
     "fix": "ultracite fix",
@@ -105,6 +105,7 @@
     "drizzle-kit": "^0.25.0",
     "postcss": "^8",
     "tailwindcss": "^4.1.13",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
     "ultracite": "^7.0.11"

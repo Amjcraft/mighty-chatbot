@@ -1,9 +1,10 @@
-import { config } from "@/chatbot.config";
 import type { ChatModel } from "@/lib/chatbot/config";
 
 export type { ChatModel } from "@/lib/chatbot/config";
 
-export const DEFAULT_CHAT_MODEL = config.defaultModel;
+// export const DEFAULT_CHAT_MODEL = config.defaultModel;
+
+export const DEFAULT_CHAT_MODEL = "moonshotai/kimi-k2.5";
 
 export const titleModel = {
   id: "mistral/mistral-small",
@@ -19,7 +20,7 @@ export type ModelCapabilities = {
   reasoning: boolean;
 };
 
-export const chatModels: ChatModel[] = config.models;
+export const chatModels: ChatModel[] = [];
 
 export async function getCapabilities(): Promise<
   Record<string, ModelCapabilities>

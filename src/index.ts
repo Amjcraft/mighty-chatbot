@@ -6,6 +6,8 @@ export type { ArtifactDefinition } from "./artifacts/types";
 export { defineArtifact } from "./artifacts/types";
 export type { ArtifactMessagePart } from "./components/artifact-renderer";
 export { ArtifactRenderer } from "./components/artifact-renderer";
+export { ThemeProvider } from "./components/theme-provider";
+export { TooltipProvider } from "./components/ui/tooltip";
 export type {
   AuthResolver,
   AuthUser,
@@ -19,7 +21,6 @@ export type {
 } from "./core/config";
 export type { ChatbotInstance } from "./core/factory";
 export { Chatbot } from "./core/factory";
-
 export type { ActionEvent, Chat, Document, Message, Vote } from "./core/types";
 export type { PaginationOptions, StorageAdapter } from "./storage/adapter";
 export { DrizzleAdapter } from "./storage/drizzle";
